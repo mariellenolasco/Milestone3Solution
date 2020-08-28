@@ -10,7 +10,6 @@ using System;
 using System.Linq;
 using Lodging.WebAPI;
 using Microsoft.Extensions.Hosting;
-using Lodging.DataAccess.Seed;
 using System.Reflection;
 
 namespace Lodging.IntegrationTests
@@ -58,16 +57,6 @@ namespace Lodging.IntegrationTests
                     // Ensure the database is created.
                     db.Database.EnsureCreated();
 
-                    try
-                    {
-                        // Seed the database with test data.
-                        Seed.SeedDatabase(db);
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.LogError(ex, "An error occurred seeding the " +
-                            "database with test messages. Error: {Message}", ex.Message);
-                    }
                 }
             });
         }
