@@ -2,7 +2,7 @@
 using System.Net.Http;
 using Lodging.WebAPI;
 using Xunit;
-using Xunit.Abstractions;
+using Xunit.Priority;
 namespace Lodging.IntegrationTests
 {
     public class IntegrationTester : IClassFixture<CustomWebApplicationFactoryInMemDB<Startup>>
@@ -34,10 +34,11 @@ namespace Lodging.IntegrationTests
             Assert.Equal(System.Net.HttpStatusCode.Created, r.StatusCode);
 
             //LocationHeader Exists
-            Assert.NotNull(r.Content.Headers.ContentLocation);
+            var loc = r.Headers.Location;
+            Assert.NotNull(loc);
 
             //Make Get Request to LocationHeader URL
-            var LocationExists = await _client.GetAsync(r.Content.Headers.ContentLocation);
+            var LocationExists = await _client.GetAsync(loc);
 
             //LocationHeader Is Valid url
             Assert.Equal(System.Net.HttpStatusCode.OK, LocationExists.StatusCode);
@@ -65,30 +66,7 @@ namespace Lodging.IntegrationTests
             //response status code is equal to 422
             Assert.Equal(System.Net.HttpStatusCode.UnprocessableEntity, r.StatusCode);
         }
-        /*
-        * <summary>
-        * (url, post data) => checks that post is unsuccessful with
-         *                     409 Conflict
-        * </summary>
-        */
-        [Theory]
-        [MemberData(nameof(StaticTestingData.Get409Requests), MemberType = typeof(StaticTestingData))]
-        public async void CheckInvalid409PostResponse(string GetUrl, string PostUrl)
-        {
-            //arange
-            var re = await _client.GetAsync(GetUrl);
-            var body = re.Content;
-            var httpContent = new StringContent(body.ToString());
-            httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-
-            //act
-            var r = await _client.PostAsync(PostUrl, httpContent);
-
-            //assert
-            //response status code is 409
-            Assert.Equal(System.Net.HttpStatusCode.Conflict, r.StatusCode);
-        }
-
+        
         /*
         * <summary>
         * (url) =>  checks that get is successful with:
@@ -97,7 +75,7 @@ namespace Lodging.IntegrationTests
          *                     ContentType: "application/json; charset=utf-8"
         * </summary>
         */
-        [Theory]
+        [Theory, Priority(-1)]
         [MemberData(nameof(StaticTestingData.GetRequests), MemberType = typeof(StaticTestingData))]
         public async void CheckGetResponse(string url)
         {
