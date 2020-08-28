@@ -47,7 +47,7 @@ namespace Lodging.WebAPI.Controllers
             await _unitOfWork.Lodging.InsertAsync(lodging);
             await _unitOfWork.CommitAsync();
 
-            return Accepted(lodging);
+            return Created(Url.RouteUrl(lodging.Id), lodging.Id);
         }
 
         // PUT: api/Lodging/5
