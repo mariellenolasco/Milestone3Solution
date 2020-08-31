@@ -43,6 +43,7 @@ namespace Lodging.IntegrationTests
       Assert.Equal(System.Net.HttpStatusCode.OK, LocationExists.StatusCode);
 
     }
+
     /*
      * <summary>
      * (url, post data) => checks that post is unsuccessful with
@@ -127,6 +128,28 @@ namespace Lodging.IntegrationTests
       //assert
       //response status code 202
       Assert.Equal(System.Net.HttpStatusCode.NoContent, r.StatusCode);
+    }
+    /*
+    * <summary>
+    * (url) =>  checks that put is successful with:
+     *                     202: Accepted
+     *                     Fields match on newly updated put
+     *                     
+    * </summary>
+    */
+    [MemberData(nameof(StaticTestingData.PutRequests), MemberType = typeof(StaticTestingData))]
+    [Theory]
+    public async void CheckPutResponse(string url, object updatedData)
+    {
+      //arrange
+      var httpContent = new StringContent(updatedData.ToString());
+      httpContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+
+      //act
+      var r = await _client.PutAsync(url, httpContent);
+
+      //assert
+      Assert.Equal(System.Net.HttpStatusCode.Accepted, r.StatusCode);
     }
     /*
     * <summary>
