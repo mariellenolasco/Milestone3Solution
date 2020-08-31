@@ -53,7 +53,6 @@ namespace Lodging.IntegrationTests
      * </summary>
      */
     [MemberData(nameof(StaticTestingData.Post422Requests), MemberType = typeof(StaticTestingData))]
-    [Theory]
     public async void CheckInvalid422PostResponse(string url, string data)
     {
       //arrange
@@ -104,7 +103,6 @@ namespace Lodging.IntegrationTests
     {
       //act
       var r = await _client.GetAsync(url);
-      Console.WriteLine(await r.Content.ReadAsStringAsync());
       //assert
       //response status code is 404
       Assert.Equal(System.Net.HttpStatusCode.NotFound, r.StatusCode);
@@ -150,7 +148,15 @@ namespace Lodging.IntegrationTests
       var r = await _client.PutAsync(url, httpContent);
 
       //assert
+      //checks if response exists
+      Assert.NotNull(r.Content);
+      //checks 202
       Assert.Equal(System.Net.HttpStatusCode.Accepted, r.StatusCode);
+      //Checks if fields match newly updated input
+      var content = await r.Content.ReadAsStringAsync();
+      Assert.Contains("Updated Info", content);
+
+
     }
     /*
     * <summary>

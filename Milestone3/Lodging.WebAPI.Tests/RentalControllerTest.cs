@@ -2,6 +2,8 @@
 using Lodging.DataAccess.Repositories;
 using Lodging.Models;
 using Lodging.WebAPI.Controllers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -19,6 +21,7 @@ namespace RVTR.Lodging.UnitTesting.Tests
     private const int TestingId = -500;
     private static readonly DbContextOptions<LodgingContext> _options = new DbContextOptionsBuilder<LodgingContext>().UseSqlite(_connection).Options;
     private readonly RentalController _controller;
+    private readonly string locationUrl = "";
     private readonly UnitOfWork _unitOfWork;
 
     public RentalControllerTest()
@@ -27,6 +30,7 @@ namespace RVTR.Lodging.UnitTesting.Tests
       var loggerMock = new Mock<ILogger<RentalController>>();
       var repositoryMock = new Mock<Repository<RentalModel>>(new LodgingContext(_options));
       var unitOfWorkMock = new Mock<UnitOfWork>(contextMock.Object);
+      var mockUrlHelper = new Mock<IUrlHelper>();
 
       repositoryMock.Setup(m => m.DeleteAsync(0)).Throws(new Exception());
       repositoryMock.Setup(m => m.DeleteAsync(1)).Returns(Task.FromResult(1));
@@ -36,9 +40,12 @@ namespace RVTR.Lodging.UnitTesting.Tests
       repositoryMock.Setup(m => m.SelectAsync(1)).Returns(Task.FromResult<RentalModel>(null));
       repositoryMock.Setup(m => m.Update(It.IsAny<RentalModel>()));
       unitOfWorkMock.Setup(m => m.Rental).Returns(repositoryMock.Object);
+      mockUrlHelper.Setup(x => x.RouteUrl(It.IsAny<UrlRouteContext>()))
+      .Returns(locationUrl);
 
       _unitOfWork = unitOfWorkMock.Object;
       _controller = new RentalController(_unitOfWork);
+      _controller.Url = mockUrlHelper.Object;
     }
 
     [Fact]
