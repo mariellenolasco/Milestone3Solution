@@ -65,7 +65,7 @@ namespace RVTR.Lodging.UnitTesting.Tests
         [Fact]
         public async void Test_Controller_Post()
         {
-            var resultPass = await _controller.PostAsync(new LodgingModel());
+              var resultPass = await _controller.PostAsync(new LodgingModel());
 
             Assert.NotNull(resultPass);
         }

@@ -13,14 +13,14 @@ namespace Lodging.DataAccess.Tests
     {
         private static readonly SqliteConnection _connection = new SqliteConnection("Data Source=:memory:");
         private static readonly DbContextOptions<LodgingContext> _options = new DbContextOptionsBuilder<LodgingContext>().UseSqlite(_connection).Options;
-
+        private const int TestId = -500;
         public static readonly IEnumerable<object[]> _records = new List<object[]>()
         {
           new object[]
           {
-            new LodgingModel() { Id = 2 },
-            new RentalModel() { Id = 2 },
-            new ReviewModel() { Id = 2 }
+            new LodgingModel() { Id = TestId },
+            new RentalModel() { Id = TestId },
+            new ReviewModel() { Id = TestId }
           }
         };
 
@@ -45,10 +45,10 @@ namespace Lodging.DataAccess.Tests
                 {
                     var lodgings = new Repository<LodgingModel>(ctx);
 
-                    await lodgings.DeleteAsync(2);
+                    await lodgings.DeleteAsync(TestId);
                     await ctx.SaveChangesAsync();
 
-                    var result = await ctx.Lodging.Select(x => x.Id == 2).ToListAsync();
+                    var result = await ctx.Lodging.Select(x => x.Id == TestId).ToListAsync();
                     Assert.False(result[0]);
                 }
 
@@ -56,10 +56,10 @@ namespace Lodging.DataAccess.Tests
                 {
                     var rentals = new Repository<RentalModel>(ctx);
 
-                    await rentals.DeleteAsync(2);
+                    await rentals.DeleteAsync(TestId);
                     await ctx.SaveChangesAsync();
 
-                    var result = await ctx.Rentals.Select(x => x.Id == 2).ToListAsync();
+                    var result = await ctx.Rentals.Select(x => x.Id == TestId).ToListAsync();
                     Assert.False(result[0]);
                 }
 
@@ -67,10 +67,10 @@ namespace Lodging.DataAccess.Tests
                 {
                     var reviews = new Repository<ReviewModel>(ctx);
 
-                    await reviews.DeleteAsync(2);
+                    await reviews.DeleteAsync(TestId);
                     await ctx.SaveChangesAsync();
 
-                    var result = await ctx.Reviews.Select(x => x.Id == 2).ToListAsync();
+                    var result = await ctx.Reviews.Select(x => x.Id == TestId).ToListAsync();
                     Assert.False(result[0]);
                 }
             }
@@ -190,7 +190,7 @@ namespace Lodging.DataAccess.Tests
                 {
                     var lodgings = new Repository<LodgingModel>(ctx);
 
-                    var actual = await lodgings.SelectAsync(2);
+                    var actual = await lodgings.SelectAsync(TestId);
 
                     Assert.Null(actual);
                 }
@@ -199,7 +199,7 @@ namespace Lodging.DataAccess.Tests
                 {
                     var rentals = new Repository<RentalModel>(ctx);
 
-                    var actual = await rentals.SelectAsync(2);
+                    var actual = await rentals.SelectAsync(TestId);
 
                     Assert.Null(actual);
                 }
@@ -208,7 +208,7 @@ namespace Lodging.DataAccess.Tests
                 {
                     var reviews = new Repository<ReviewModel>(ctx);
 
-                    var actual = await reviews.SelectAsync(2);
+                    var actual = await reviews.SelectAsync(TestId);
 
                     Assert.Null(actual);
                 }

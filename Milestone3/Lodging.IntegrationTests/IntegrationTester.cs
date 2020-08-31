@@ -5,6 +5,7 @@ using Xunit;
 using Xunit.Priority;
 namespace Lodging.IntegrationTests
 {
+  [TestCaseOrderer(PriorityOrderer.Name, PriorityOrderer.Assembly)]
   public class IntegrationTester : IClassFixture<CustomWebApplicationFactoryInMemDB<Startup>>
   {
     private readonly HttpClient _client;
