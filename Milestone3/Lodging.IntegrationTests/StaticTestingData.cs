@@ -198,7 +198,7 @@ namespace Lodging.IntegrationTests
     public static List<object[]> PutRequests()
     {
       var update = new List<object[]>();
-      for (int i = 1; i < IdIterations; i++)
+      for (int i = StartingId; i < IdIterations; i++)
       {
         update.Add(new object[]{ "api/Rental/" + i,  JObject.FromObject(new RentalModel() {
             Status = "available",

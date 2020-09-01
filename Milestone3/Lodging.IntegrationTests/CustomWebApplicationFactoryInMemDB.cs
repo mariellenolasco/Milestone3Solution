@@ -1,5 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +9,6 @@ using System;
 using System.Linq;
 using Lodging.WebAPI;
 using Microsoft.Extensions.Hosting;
-using System.Reflection;
 using Lodging.DataAccess.Seed;
 
 namespace Lodging.IntegrationTests
