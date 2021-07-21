@@ -20,9 +20,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./Milestone3
     - name: Build
-      run: dotnet build --no-restore ./Milestone3
+      run: dotnet build Milestone3 --no-restore 
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./Milestone3
+      run: dotnet test Milestone3 --no-build --verbosity normal 
 #     - name: Cache SonarCloud packages
 #       uses: actions/cache@v1
 #       with:
