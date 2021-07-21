@@ -20,52 +20,9 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./Milestone3
     - name: Build
-      run: dotnet build Milestone3 --no-restore 
+      run: dotnet build Milestone3 --no-restore -- configuration release
     - name: Test
       run: dotnet test Milestone3 --no-build --verbosity normal 
-#     - name: Cache SonarCloud packages
-#       uses: actions/cache@v1
-#       with:
-#         path: ~\sonar\cache
-#         key: ${{ runner.os }}-sonar
-#         restore-keys: ${{ runner.os }}-sonar
-#     - name: Cache SonarCloud scanner
-#       id: cache-sonar-scanner
-#       uses: actions/cache@v1
-#       with:
-#         path: .\.sonar\scanner
-#         key: ${{ runner.os }}-sonar-scanner
-#         restore-keys: ${{ runner.os }}-sonar-scanner
-#     - name: Install SonarCloud scanner
-#       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
-#       shell: pwsh
-#       run: |
-#         New-Item -Path .\.sonar\scanner -ItemType Directory
-#         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
-#     - name: Build and analyze
-#       env:
-#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-#         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-#       shell: pwsh
-#       run: |
-#         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Milestone3" /o:"mtnolasco1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
-#         dotnet build ./Milestone3
-#         dotnet test ./Milestone3
-#         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-#     - name: dotnet-sonarcloud
-#     # You may pin to the exact commit or the version.
-#     # uses: NazmiAltun/dotnet-sonarscanner-action@435fe12ba60106189d0e52c85869915153b99cf1
-#       uses: NazmiAltun/dotnet-sonarscanner-action@1.0.6-beta
-#       with:
-#         # SonarQube/SonarCloud project key
-#         project-key: Milestone3
-#         # SonarQube/SonarCloud project name
-#         project-name: Milestone3
-#         # Organization name on SonarQube/SonarCloud
-#         organization: mtnolasco1
-#         # Pattern for code coverage exclusion
-#         # Relative path of sln file
-#         solution-path: ./Milestone3
     - name: SonarScanner for .NET 5
       uses: highbyte/sonarscan-dotnet@2.0
       with:
@@ -82,5 +39,14 @@ jobs:
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Publish
+      run: dotnet publish -c Release -o '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/lodging'
+    # Deploy to Azure Web apps
+    - name: 'Run Azure webapp deploy action using publish profile credentials'
+      uses: azure/webapps-deploy@v2
+      with: 
+        app-name: LodgingDemo # Replace with your app name
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }} # Define secret variable in repository settings as per action documentation
+        package: '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/lodging'
 
 
