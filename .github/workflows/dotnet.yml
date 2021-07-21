@@ -52,19 +52,35 @@ jobs:
 #         dotnet build ./Milestone3
 #         dotnet test ./Milestone3
 #         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
-    - name: dotnet-sonarcloud
-    # You may pin to the exact commit or the version.
-    # uses: NazmiAltun/dotnet-sonarscanner-action@435fe12ba60106189d0e52c85869915153b99cf1
-      uses: NazmiAltun/dotnet-sonarscanner-action@1.0.6-beta
+#     - name: dotnet-sonarcloud
+#     # You may pin to the exact commit or the version.
+#     # uses: NazmiAltun/dotnet-sonarscanner-action@435fe12ba60106189d0e52c85869915153b99cf1
+#       uses: NazmiAltun/dotnet-sonarscanner-action@1.0.6-beta
+#       with:
+#         # SonarQube/SonarCloud project key
+#         project-key: Milestone3
+#         # SonarQube/SonarCloud project name
+#         project-name: Milestone3
+#         # Organization name on SonarQube/SonarCloud
+#         organization: mtnolasco1
+#         # Pattern for code coverage exclusion
+#         # Relative path of sln file
+#         solution-path: ./Milestone3
+    - name: SonarScanner for .NET 5
+      uses: highbyte/sonarscan-dotnet@2.0
       with:
-        # SonarQube/SonarCloud project key
-        project-key: Milestone3
-        # SonarQube/SonarCloud project name
-        project-name: Milestone3
-        # Organization name on SonarQube/SonarCloud
-        organization: mtnolasco1
-        # Pattern for code coverage exclusion
-        # Relative path of sln file
-        solution-path: ./Milestone3
+        # The key of the SonarQube project
+        sonarProjectKey: Milestone3
+        # The name of the SonarQube project
+        sonarProjectName: Milestone3
+        # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+        sonarOrganization: mtnolasco1
+        dotnetBuildArguments: Milestone3
+        dotnetTestArguments: Milestone3 --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        # Optional extra command arguments the the SonarScanner 'begin' command
+        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
