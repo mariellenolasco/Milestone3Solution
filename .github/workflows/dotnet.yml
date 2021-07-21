@@ -1,0 +1,86 @@
+name: .NET
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore ./Milestone3
+    - name: Build
+      run: dotnet build Milestone3 --no-restore 
+    - name: Test
+      run: dotnet test Milestone3 --no-build --verbosity normal 
+#     - name: Cache SonarCloud packages
+#       uses: actions/cache@v1
+#       with:
+#         path: ~\sonar\cache
+#         key: ${{ runner.os }}-sonar
+#         restore-keys: ${{ runner.os }}-sonar
+#     - name: Cache SonarCloud scanner
+#       id: cache-sonar-scanner
+#       uses: actions/cache@v1
+#       with:
+#         path: .\.sonar\scanner
+#         key: ${{ runner.os }}-sonar-scanner
+#         restore-keys: ${{ runner.os }}-sonar-scanner
+#     - name: Install SonarCloud scanner
+#       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+#       shell: pwsh
+#       run: |
+#         New-Item -Path .\.sonar\scanner -ItemType Directory
+#         dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
+#     - name: Build and analyze
+#       env:
+#         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+#         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#       shell: pwsh
+#       run: |
+#         .\.sonar\scanner\dotnet-sonarscanner begin /k:"Milestone3" /o:"mtnolasco1" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+#         dotnet build ./Milestone3
+#         dotnet test ./Milestone3
+#         .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+#     - name: dotnet-sonarcloud
+#     # You may pin to the exact commit or the version.
+#     # uses: NazmiAltun/dotnet-sonarscanner-action@435fe12ba60106189d0e52c85869915153b99cf1
+#       uses: NazmiAltun/dotnet-sonarscanner-action@1.0.6-beta
+#       with:
+#         # SonarQube/SonarCloud project key
+#         project-key: Milestone3
+#         # SonarQube/SonarCloud project name
+#         project-name: Milestone3
+#         # Organization name on SonarQube/SonarCloud
+#         organization: mtnolasco1
+#         # Pattern for code coverage exclusion
+#         # Relative path of sln file
+#         solution-path: ./Milestone3
+    - name: SonarScanner for .NET 5
+      uses: highbyte/sonarscan-dotnet@2.0
+      with:
+        # The key of the SonarQube project
+        sonarProjectKey: Milestone3
+        # The name of the SonarQube project
+        sonarProjectName: Milestone3
+        # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+        sonarOrganization: mtnolasco1
+        dotnetBuildArguments: Milestone3
+        dotnetTestArguments: Milestone3 --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        # Optional extra command arguments the the SonarScanner 'begin' command
+        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
