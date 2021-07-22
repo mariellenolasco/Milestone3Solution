@@ -13,6 +13,7 @@ namespace Lodging.WebAPI.Controllers
     public LodgingController(UnitOfWork unitOfWork)
     {
       _unitOfWork = unitOfWork;
+      
     }
 
     // GET: api/Lodging
